@@ -1,0 +1,41 @@
+{% set name = "ffs" %}
+{% set version = "1.6.0" %}
+{% set build = 0 %}
+{% set sha256 =  "2e5f547d9e4994d4f52fc4615cbf2e51e4aa82480c3624faade88a0e709a9172" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/GTkorvo/{{ name }}/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - dill
+    - atl
+  host:
+    - make          # [unix]
+    - pkg-config    # [unix]
+    - cmake >=3.11
+    - dill
+    - atl
+  run:
+    - dill
+    - atl
+
+
+test:
+  imports:
+  commands:
+    - test -f ${PREFIX}/lib/cmake/ffs/ffs-config.cmake                      # [unix]
+    - test -f ${PREFIX}/lib/libffs.so                                          # [linux]
+    - otool -L ${PREFIX}/lib/libffs.dylib                                      # [osx]
+    - if exist %LIBRARY_PREFIX%\bin\ffs.dll (exit 0) else (exit 1)             # [win]
+    - if exist %LIBRARY_PREFIX%\lib\cmake\ffs\ffs-config.cmake (exit 0) else (exit 1)  # [win]

@@ -1,0 +1,38 @@
+{% set name = "atl" %}
+{% set version = "2.2.1" %}
+{% set build = 0 %}
+{% set sha256 =  "7ff2dca93702ed56e3bbfd8eb52da3bb5f0e7bef5006f3ca29aaa468cab89037" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/GTkorvo/{{ name }}/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  run_exports:
+    strong:
+      - atl
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - make          # [unix]
+    - pkg-config    # [unix]
+    - cmake >=3.11
+  run:
+
+
+test:
+  imports:
+  commands:
+    - test -f ${PREFIX}/lib/cmake/atl/atl-config.cmake                      # [unix]
+    - test -f ${PREFIX}/lib/libatl.so                                          # [linux]
+    - otool -L ${PREFIX}/lib/libatl.dylib                                      # [osx]
+    - if exist %LIBRARY_PREFIX%\bin\atl.dll (exit 0) else (exit 1)             # [win]
+    - if exist %LIBRARY_PREFIX%\lib\cmake\atl\atl-config.cmake (exit 0) else (exit 1)  # [win]

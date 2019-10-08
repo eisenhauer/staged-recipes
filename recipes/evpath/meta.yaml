@@ -1,0 +1,44 @@
+{% set name = "evpath" %}
+{% set version = "4.5.0" %}
+{% set build = 0 %}
+{% set sha256 =  "569e65df39488c5c1056d47283ced0c9ef4dd51481a6fc7e495764734edb7e18" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ version }}
+
+source:
+  url: https://github.com/GTkorvo/{{ name }}/archive/v{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - dill
+    - atl
+    - ffs
+  host:
+    - make          # [unix]
+    - pkg-config    # [unix]
+    - cmake >=3.11
+    - dill
+    - atl
+    - ffs
+  run:
+    - dill
+    - atl
+    - ffs
+
+
+test:
+  imports:
+  commands:
+    - test -f ${PREFIX}/lib/cmake/evpath/evpath-config.cmake                      # [unix]
+    - test -f ${PREFIX}/lib/libevpath.so                                          # [linux]
+    - otool -L ${PREFIX}/lib/libevpath.dylib                                      # [osx]
+    - if exist %LIBRARY_PREFIX%\bin\evpath.dll (exit 0) else (exit 1)             # [win]
+    - if exist %LIBRARY_PREFIX%\lib\cmake\evpath\evpath-config.cmake (exit 0) else (exit 1)  # [win]
